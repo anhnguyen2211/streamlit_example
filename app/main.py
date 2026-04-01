@@ -4,10 +4,15 @@ import streamlit as st
 from database import Database
 
 
+ALLOWED_TABLES = {"table_name"}
+
+
 @st.experimental_memo
 def getTestData(_db, table_name="table_name"):
+    if table_name not in ALLOWED_TABLES:
+        raise ValueError(f"Invalid table name: {table_name}")
     select_cursor = _db.cursor(buffered=True)
-    sql = f"select * from {table_name} order by ReportDate desc"
+    sql = f"select * from `{table_name}` order by ReportDate desc"
     select_cursor.execute(sql)
     data = [[item[0], item[1], item[2], item[3], item[4]] for item in select_cursor.fetchall()]
     return data
